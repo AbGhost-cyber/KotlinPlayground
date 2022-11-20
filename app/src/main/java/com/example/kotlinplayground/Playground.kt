@@ -3,21 +3,35 @@ package com.example.kotlinplayground
 import kotlin.system.measureTimeMillis
 
 fun main() {
-    val list = mutableListOf(1, 2, 3)
-    // treatment
-    val list2 = mutableListOf(
-        "Tt",
-        "rment",
-        "e",
-        "a"
-    )
-    // println(solution(list, list, 31))
-//    measureTime("run char code") {
-//        println(solution(list2))
-//    }
-    measureTime("repeated letters") {
-        println(findSuitableExpression(15, "2+100 5*3 14+1"))
+    measureTime("determine moves") {
     }
+}
+
+fun determineMoves(input: String): Int {
+    val twoDMap = input.split(',').toTypedArray()
+    var copRow = -1
+    var thiefRow = -1
+    for (i in twoDMap.indices) {
+        val row = twoDMap[i]
+        if (row.contains("P")) {
+            if (copRow < 0) {
+                copRow = i
+            } else {
+                thiefRow = i
+            }
+        }
+    }
+    if (copRow < 0 || thiefRow < 0) {
+        return 0
+    }
+    val thiefPos = twoDMap[thiefRow].indexOfLast { it == 'P' }
+    val copPos = twoDMap[copRow].indexOfFirst { it == 'P' }
+    val stepsBeforeDown = if (thiefPos >= copPos) {
+        thiefPos - copPos
+    } else {
+        copPos - thiefPos
+    }
+    return stepsBeforeDown + thiefRow
 }
 
 fun findSuitableExpression(value: Int, expressions: String): String {
