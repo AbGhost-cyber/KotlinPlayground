@@ -14,24 +14,35 @@ fun determineMoves(input: String): Int {
     for (i in twoDMap.indices) {
         val row = twoDMap[i]
         if (row.contains("P")) {
-            if (copRow < 0) {
-                copRow = i
+            if (row.count { it == 'P' } == 1) {
+                if (copRow < 0) {
+                    copRow = i
+                } else {
+                    thiefRow = i
+                }
             } else {
+                // here cop and thief are on same line in map
                 thiefRow = i
+                copRow = i
             }
         }
     }
     if (copRow < 0 || thiefRow < 0) {
         return 0
     }
-    val thiefPos = twoDMap[thiefRow].indexOfLast { it == 'P' }
     val copPos = twoDMap[copRow].indexOfFirst { it == 'P' }
+    val thiefPos = if (thiefRow == copRow) {
+        twoDMap[thiefRow].indexOf('P', copPos)
+    } else {
+        twoDMap[thiefRow].indexOfFirst { it == 'P' }
+    }
+
     val stepsBeforeDown = if (thiefPos >= copPos) {
         thiefPos - copPos
     } else {
         copPos - thiefPos
     }
-    return stepsBeforeDown + thiefRow
+    return stepsBeforeDown + thiefRow + 1
 }
 
 fun findSuitableExpression(value: Int, expressions: String): String {
@@ -155,4 +166,57 @@ fun solution4(a: MutableList<Int>): Long {
         count++
     }
     return total
+}
+
+// question 5
+fun solution5(a: MutableList<Int>, k: Int): Long {
+    return 0
+}
+
+// solution 6
+fun solution6(a: MutableList<Int>): MutableList<Int> {
+    val mutatedArray = arrayListOf<Int>()
+    for (i in a.indices) {
+        val subValue = if ((i - 1) >= 0) {
+            a[i - 1]
+        } else {
+            0
+        }
+        val addValue = if ((i + 1) < a.size) {
+            a[i + 1]
+        } else {
+            0
+        }
+        val mutatedValue = subValue + a[i] + addValue
+        mutatedArray.add(mutatedValue)
+    }
+    return mutatedArray
+}
+
+fun solution7(pattern: String, source: String): Int {
+    fun Char.isVowel(): Boolean {
+        return this == 'a' || this == 'e' || this == 'i' || this == 'o' || this == 'u' || this == '0'
+    }
+
+    val limit = pattern.length - 1
+    var totalMatchCounts = 0
+    for (i in 0..source.length - limit) {
+        if (i + limit < source.length) {
+            val subString = source.substring(i..i + limit)
+            var matchCount = 0
+            for (j in pattern.indices) {
+                if (pattern[j].isVowel() && subString[j].isVowel()) {
+                    matchCount++
+                } else if (!pattern[j].isVowel() && !subString[j].isVowel()) {
+                    matchCount++
+                } else {
+                    break
+                }
+            }
+            if (matchCount == subString.length) {
+                totalMatchCounts++
+            }
+        }
+    }
+    return totalMatchCounts
 }
